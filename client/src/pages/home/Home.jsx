@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { createData, getAllData } from '../../utils/api';
 
 const Home = () => {
 	const [users, setUsers] = useState([]);
@@ -44,24 +45,21 @@ const createUser = async (event, setUsers) => {
 		email: event.target.email.value
 	};
 
-	const response = await fetch('http://localhost:3000/api/users', {
-		method: 'POST',
-		body: JSON.stringify(userData),
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
-	// Convierte los datos a un formato JS y depués imprimes
-	const data = await response.json();
-	setUsers(data);
+	try {
+		const data = await createData(userData);
+		setUsers(data);
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 const getAllUsers = async setUsers => {
-	// Pide los datos y espera hasta tenerlos disponibles
-	const response = await fetch('http://localhost:3000/api/users');
-	// Convierte los datos a un formato JS y depués imprimes
-	const data = await response.json();
-	setUsers(data);
+	try {
+		const data = await getAllData();
+		setUsers(data);
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 export default Home;

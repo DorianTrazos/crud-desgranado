@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { deleteDataById, getDataById, updateDataById } from '../../utils/api';
 
 const User = () => {
 	const [user, setUser] = useState();
@@ -67,21 +68,21 @@ const User = () => {
 };
 
 const getUserById = async (id, setUser) => {
-	// Pide los datos y espera hasta tenerlos disponibles
-	const response = await fetch(`http://localhost:3000/api/users/${id}`);
-	// Convierte los datos a un formato JS y depués imprimes
-	const data = await response.json();
-	setUser(data);
+	try {
+		const data = await getDataById(id);
+		setUser(data);
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 const deleteUserById = async (id, navigate) => {
-	// Pide los datos y espera hasta tenerlos disponibles
-	await fetch(`http://localhost:3000/api/users/${id}`, {
-		method: 'DELETE'
-	});
-
-	//navigate('ruta')
-	navigate('/');
+	try {
+		await deleteDataById(id);
+		navigate('/');
+	} catch (error) {
+		console.log(error);
+	}
 };
 
 const updateUser = async (event, id, user, setUser, setIsEditing) => {
@@ -91,17 +92,14 @@ const updateUser = async (event, id, user, setUser, setIsEditing) => {
 		email: event.target.email.value || user.email
 	};
 
-	const response = await fetch(`http://localhost:3000/api/users/${id}`, {
-		method: 'PATCH',
-		body: JSON.stringify(userData),
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
-	// Convierte los datos a un formato JS y depués imprimes
-	const data = await response.json();
-	setUser(data);
-	setIsEditing(false);
+	try {
+		const data = await updateDataById(id, userData);
+		setUser(data);
+	} catch (error) {
+		console.log(error);
+	} finally {
+		setIsEditing(false);
+	}
 };
 
 export default User;
